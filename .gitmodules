@@ -1,0 +1,3 @@
+[submodule "HHStatAnalysis"]
+	path = HHStatAnalysis
+	url = https://github.com/cms-hh/HHStatAnalysis.git
