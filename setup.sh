@@ -1,2 +1,3 @@
 
-export PYTHONPATH=HHStatAnalysis/AnalyticalModels/python/:$PYTHONPATH
+export PYTHONPATH=$PWD/configs:$PYTHONPATH
+export PYTHONPATH=$PWD/HHStatAnalysis/AnalyticalModels/python/:$PYTHONPATH
