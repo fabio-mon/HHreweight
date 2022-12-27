@@ -2,7 +2,7 @@ import ROOT as r
 
 variables = {
     "mHH":{
-        "formula":"mhh",
+        "formula":"mHH",
         "title":"m_{HH} (GeV)",
         "xmin":250,
         "xmax":5000.,
@@ -11,7 +11,7 @@ variables = {
         "Nbin":300
     },
     "costhetaHH":{
-        "formula":"absCosThetaStar_CS",
+        "formula":"costhetaHH",
         "title":"cos(#theta*) (GeV)",
         "xmin":0.,
         "xmax":1.,
@@ -23,7 +23,7 @@ variables = {
 
 inputs = {
 
-    "rewcHHH_to_NLOcHHHci":{
+    "rewcHHH_to_NLOcHHH0":{
         "title":"Rew. NLO samples",
         "linecolor":r.kGreen+2,
         "fillcolor":0,
@@ -32,12 +32,8 @@ inputs = {
         "weight":"(weight*BMreweight_cHHH0*0.25)",
         "stack":0,
         "filelumis":[
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
+             "genEvents",1.]
         ]
     },
 
@@ -50,12 +46,8 @@ inputs = {
         "weight":"(weight)",
         "stack":0,
         "filelumis":[
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH0.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH0.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH0.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/validation/GluGluToHHTo4B_node_cHHH0_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.root",
+             "genEvents",1.]
         ]
     },
 
@@ -68,12 +60,8 @@ inputs = {
         "weight":"(weight*BMreweight_cHHH1*0.25)",
         "stack":0,
         "filelumis":[
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
+             "genEvents",1.]
         ]
     },
 
@@ -86,12 +74,8 @@ inputs = {
         "weight":"(weight)",
         "stack":0,
         "filelumis":[
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH1.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH1.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH1.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/validation/GluGluToHHTo4B_node_cHHH1_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.root",
+             "genEvents",1.]
         ]
     },
 
@@ -104,12 +88,8 @@ inputs = {
         "weight":"(weight*BMreweight_cHHH2p45*0.25)",
         "stack":0,
         "filelumis":[
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
+             "genEvents",1.]
         ]
     },
 
@@ -122,12 +102,8 @@ inputs = {
         "weight":"(weight)",
         "stack":0,
         "filelumis":[
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH2p45.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH2p45.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH2p45.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/validation/GluGluToHHTo4B_node_cHHH2p45_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.root",
+             "genEvents",1.]
         ]
     },
 
@@ -140,12 +116,8 @@ inputs = {
         "weight":"(weight*BMreweight_cHHH5*0.25)",
         "stack":0,
         "filelumis":[
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["data/output_hh_2017_NLO_reweight.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
+             "genEvents",1.]
         ]
     },
 
@@ -158,12 +130,8 @@ inputs = {
         "weight":"(weight)",
         "stack":0,
         "filelumis":[
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH5.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_NoTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH5.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_DoubleHTag_0",1.],
-            ["/eos/user/f/fmonti/HHbbgg_run2/workspaces/24JUN2021/merged/output_hh_2017_cHHH5.root",
-             "genDiphotonDumper/trees/hh2017_13TeV_125_13TeV_VBFDoubleHTag_0",1.]
+            ["data/validation/GluGluToHHTo4B_node_cHHH5_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.root",
+             "genEvents",1.]
         ]
     },
 

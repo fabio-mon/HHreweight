@@ -18,10 +18,39 @@ vector<string> LoadFilelist(string filenameslist)
       infilenames.push_back(line);
     }
   }
+  cout<<infilenames.size()<<" files found in list"<<endl;
   return infilenames;
 }
 
-void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false)
+long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents)
+{
+  int Nskippedevents=0;
+  float Generator_weight;  
+  ch->SetBranchStatus("*",0);
+  ch->SetBranchStatus("Generator_weight",1);
+  ch->SetBranchAddress("Generator_weight",&Generator_weight);
+  long Nentries = ch->GetEntries();
+  cout<<Nentries<<" entries"<<endl;
+  long double norm=0.;
+  for(long ientry=0;ientry<Nentries;++ientry) {
+    ch->GetEntry(ientry);
+    if(ientry%10000==0)
+      cout<<"reading entry "<<ientry<<"\r"<<std::flush;
+    if(!RemoveBuggedEvents) 
+      norm+=Generator_weight;
+    else 
+      if(fabs(Generator_weight)<0.1)
+	norm+=Generator_weight;
+      else
+	Nskippedevents++;
+  }
+  cout<<endl;
+  if(RemoveBuggedEvents)
+    cout<<Nskippedevents<<"/"<<Nentries<<" events removed because of large weight"<<endl;
+  return norm;
+}
+
+void nanoaodDumper(string filenameslist, string outputfilename, float Normalization=1., bool RemoveBuggedEvents=true, bool DEBUG=false)
 {
   gROOT->SetBatch(true);
 
@@ -29,17 +58,27 @@ void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false
   vector<string> infilenames = LoadFilelist(filenameslist);
   TChain* ch = new TChain();
   for(auto infilename : infilenames) {
-    cout<<"Adding file "<<infilename<<endl;
+    if(DEBUG)
+      cout<<"Adding file "<<infilename<<endl;
     ch->Add((infilename+"/Events").c_str());
   }
-  
+ 
+  cout<<"Initial loop to calculate the initial normalization"<<endl;
+  long double initial_norm = GetSampleNormalization(ch, RemoveBuggedEvents);
+  cout<<"Initial normalization = "<<initial_norm<<endl;
+ 
   // initialize branches of interest
   float Generator_weight;
-  unsigned nGenPart;
+  unsigned nGenPart, run, lumi;
+  ULong64_t event; 
   float GenPart_eta[200], GenPart_mass[200], GenPart_phi[200], GenPart_pt[200];
-  int GenPart_genPartIdxMother[200], GenPart_pdgId[200], GenPart_status[200], GenPart_statusFlags[200];
+  int GenPart_genPartIdxMother[200], GenPart_pdgId[200], GenPart_status[200], GenPart_statusFlags[200], NPV;
 
   ch->SetBranchStatus("*",0);
+  ch->SetBranchStatus("run",1);
+  ch->SetBranchStatus("luminosityBlock",1);
+  ch->SetBranchStatus("event",1);
+  ch->SetBranchStatus("PV_npvs",1);
   ch->SetBranchStatus("Generator_weight",1);
   ch->SetBranchStatus("nGenPart",1);
   ch->SetBranchStatus("GenPart_eta",1);
@@ -51,6 +90,10 @@ void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false
   ch->SetBranchStatus("GenPart_status",1);
   ch->SetBranchStatus("GenPart_statusFlags",1);
 
+  ch->SetBranchAddress("run",&run);
+  ch->SetBranchAddress("luminosityBlock",&lumi);
+  ch->SetBranchAddress("event",&event);
+  ch->SetBranchAddress("PV_npvs",&NPV);
   ch->SetBranchAddress("Generator_weight",&Generator_weight);
   ch->SetBranchAddress("nGenPart",&nGenPart);
   ch->SetBranchAddress("GenPart_eta",GenPart_eta);
@@ -62,6 +105,8 @@ void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false
   ch->SetBranchAddress("GenPart_status",GenPart_status);
   ch->SetBranchAddress("GenPart_statusFlags",GenPart_statusFlags);
 
+  double w=0.;
+
   // prepare output file
   TFile* outtreefile = new TFile(outputfilename.c_str(),"RECREATE");
   outtreefile->cd();
@@ -71,6 +116,10 @@ void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false
   TLorentzVector h2;
   float mHH;
   float costhetaHH;
+  outtree->Branch("run",&run);
+  outtree->Branch("lumi",&lumi);
+  outtree->Branch("event",&event);
+  outtree->Branch("NPV",&NPV);
   outtree->Branch("weight",&Generator_weight);
   outtree->Branch("mHH",&mHH);
   outtree->Branch("costhetaHH",&costhetaHH);
@@ -85,6 +134,13 @@ void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false
     ch->GetEntry(ientry);
     if(ientry%10000==0)
       cout<<"reading entry "<<ientry<<"\r"<<std::flush;
+
+    // check if this event should be skipped
+    if(RemoveBuggedEvents && fabs(Generator_weight)>=0.1) 
+      continue;
+
+    // rescale event weight to change the overall sample normalization
+    Generator_weight = Generator_weight * Normalization / initial_norm;
 
     //find the gen Higgs
     if(DEBUG)
@@ -124,10 +180,12 @@ void nanoaodDumper(string filenameslist, string outputfilename, bool DEBUG=false
     }
 
     mHH = (h1 + h2).M();
-    costhetaHH = getCosThetaStar_CS(h1,h2); 
+    costhetaHH = fabs(getCosThetaStar_CS(h1,h2)); 
+    w+=Generator_weight;
     outtree->Fill();
   }
-  
+  cout<<endl;  
+  cout<<w<<endl;
   //save tree in the outputfile and close
   outtree->AutoSave();
   outtreefile->Close();
