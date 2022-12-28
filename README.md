@@ -25,13 +25,28 @@ The input parameters are:
 * `RemoveBuggedEvents` when true removes all theh events with a generator weight larger than 0.1
 * `DEBUG` when true prints some message for the debug
 
-The following commands will process the 4 HH(4b) samples:
+The following commands will process the four HH(4b) samples:
 ```
-root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH0_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","path/to/output/directory/GluGluToHHTo4B_node_cHHH0.root", 1., true, false)'
-root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH1_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","path/to/output/directory/GluGluToHHTo4B_node_cHHH1.root", 1., true, false)'
-root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH2p45_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","path/to/output/directory/GluGluToHHTo4B_node_cHHH2p45.root", 1., true, false)'
-root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH5_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","path/to/output/directory/GluGluToHHTo4B_node_cHHH5.root", 1., true, false)'
+mkdir data/validation/
+root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH0_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","data/validation/GluGluToHHTo4B_node_cHHH0.root", 1., true, false)'
+root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH1_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","data/validation/GluGluToHHTo4B_node_cHHH1.root", 1., true, false)'
+root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH2p45_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","data/validation/GluGluToHHTo4B_node_cHHH2p45.root", 1., true, false)'
+root -l -q 'nanoaodDumper.C("configs/GluGluToHHTo4B_node_cHHH5_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1.txt","data/validation/GluGluToHHTo4B_node_cHHH5.root", 1., true, false)'
 ```
 
-### 
+### Calculate the (mHH, costhetaHH) normalization
+The script `make_norm.py` can process root files containing a TTree with full HH sample to use as base for the reweight, before any analysis selection. The TTree should contain one branch for the mHH and one for the costhetaHH variables at the generator level, as well as the event weight. The command is:
+```
+python make_norm.py --infilename <Input file name> --intreenames <Input tree name> --outfile <Output file name> --genweightname <Event weight name> --mHHname <mHH branch name> --costhetaHHname <costhetaHH branch name> 
+```
+         
+The following commands will prepare the normalization to reweight the HH(4b) samples with kl = {0, 2.45, 5} to the SM (kl=1).
+```
+mkdir data/reweightinput/
 
+#merge all HH samples to use as input for the reweight
+hadd data/reweightinput/GluGluToHHTo4B_node_cHHH0_cHHH2p45_cHHH5.root data/validation/GluGluToHHTo4B_node_cHHH0.root data/validation/GluGluToHHTo4B_node_cHHH2p45.root data/validation/GluGluToHHTo4B_node_cHHH5.root
+
+# calculate the normalization
+python make_norm.py --infilename data/reweightinput/GluGluToHHTo4B_node_cHHH0_cHHH2p45_cHHH5.root --intreenames genEvents  --outfile /tmp/fmonti/nev.root  --mHHname mHH --costhetaHHname costhetaHH --genweightname weight
+```
