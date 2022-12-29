@@ -29,7 +29,7 @@ inputs = {
         "fillcolor":0,
         "fillstyle":0,
         "drawstyle":"hist",
-        "weight":"(weight*BMreweight_cHHH0*0.25)",
+        "weight":"(weight*BMreweight_cHHH0)",
         "stack":0,
         "filelumis":[
             ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
@@ -57,7 +57,7 @@ inputs = {
         "fillcolor":0,
         "fillstyle":0,
         "drawstyle":"hist",
-        "weight":"(weight*BMreweight_cHHH1*0.25)",
+        "weight":"(weight*BMreweight_cHHH1)",
         "stack":0,
         "filelumis":[
             ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
@@ -85,7 +85,7 @@ inputs = {
         "fillcolor":0,
         "fillstyle":0,
         "drawstyle":"hist",
-        "weight":"(weight*BMreweight_cHHH2p45*0.25)",
+        "weight":"(weight*BMreweight_cHHH2p45)",
         "stack":0,
         "filelumis":[
             ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
@@ -113,7 +113,7 @@ inputs = {
         "fillcolor":0,
         "fillstyle":0,
         "drawstyle":"hist",
-        "weight":"(weight*BMreweight_cHHH5*0.25)",
+        "weight":"(weight*BMreweight_cHHH5)",
         "stack":0,
         "filelumis":[
             ["data/reweightoutput/GluGluToHHTo4B_node_all_TuneCP5_RunIIFall17NanoAODv7_realistic_v8-v1_reweight.root",
