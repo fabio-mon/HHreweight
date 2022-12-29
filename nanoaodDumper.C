@@ -150,7 +150,8 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
       continue;
 
     // rescale event weight to change the overall sample normalization
-    Generator_weight = Generator_weight * Normalization / initial_fixed_norm;
+    if(Normalization>0.)
+      Generator_weight = Generator_weight * Normalization / initial_norm;
 
     //find the gen Higgs
     if(DEBUG)
