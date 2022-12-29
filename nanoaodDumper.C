@@ -22,7 +22,7 @@ vector<string> LoadFilelist(string filenameslist)
   return infilenames;
 }
 
-long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents)
+long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents, long double scaling=1.)
 {
   int Nskippedevents=0;
   float Generator_weight;  
@@ -39,7 +39,7 @@ long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents)
     if(!RemoveBuggedEvents) 
       norm+=Generator_weight;
     else 
-      if(fabs(Generator_weight)<0.1)
+      if(fabs(Generator_weight/scaling)<3.e-6)
 	norm+=Generator_weight;
       else
 	Nskippedevents++;
@@ -63,9 +63,19 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
     ch->Add((infilename+"/Events").c_str());
   }
  
-  cout<<"Initial loop to calculate the initial normalization"<<endl;
-  long double initial_norm = GetSampleNormalization(ch, RemoveBuggedEvents);
+  // We need to calculate the overall normalization including all the events 
+  cout<<"Loop to calculate the initial normalization"<<endl;
+  long double initial_norm = GetSampleNormalization(ch, false, 1.);
   cout<<"Initial normalization = "<<initial_norm<<endl;
+
+  // If RemoveBuggedEvents is true we need to loop again to recompute the normalization 
+  // excluding the events such that event_weight/initial_norm>3.e-6
+  long double initial_fixed_norm = initial_norm;
+  if(RemoveBuggedEvents) {
+    cout<<"Loop to calculate the normalization after removing the bugged events"<<endl;
+    initial_fixed_norm = GetSampleNormalization(ch, true, initial_norm);
+    cout<<"Initial fixed normalization = "<<initial_norm<<endl;
+  }
  
   // initialize branches of interest
   float Generator_weight;
@@ -136,11 +146,11 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
       cout<<"reading entry "<<ientry<<"\r"<<std::flush;
 
     // check if this event should be skipped
-    if(RemoveBuggedEvents && fabs(Generator_weight)>=0.1) 
+    if(RemoveBuggedEvents && fabs(Generator_weight/initial_norm)>=3.e-6) 
       continue;
 
     // rescale event weight to change the overall sample normalization
-    Generator_weight = Generator_weight * Normalization / initial_norm;
+    Generator_weight = Generator_weight * Normalization / initial_fixed_norm;
 
     //find the gen Higgs
     if(DEBUG)
@@ -185,7 +195,7 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
     outtree->Fill();
   }
   cout<<endl;  
-  cout<<w<<endl;
+  cout<<"Overall sample normalization = "<<w<<endl;
   //save tree in the outputfile and close
   outtree->AutoSave();
   outtreefile->Close();
