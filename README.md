@@ -55,18 +55,19 @@ python make_norm.py --infilename data/reweightinput/GluGluToHHTo4B_all_nodes.roo
 ### Run the reweight
 The script `run_reweight.py` processes the HH events in the input TTree, add a re-weight for each requested (kl,kt,c2,cg,cgg) hyphothesis as new branches, and save it in a file in the output directory. The command is:
 ```
-python run_reweight.py --infilename <Input file name> --denominatorfile <Normalization file name> --mHHname <mHH branch name> --costhetaHHname <costhetaHH branch name> --outdir <Output directory>
+python run_reweight.py --infilename <Input file name> --denominatorfile <Normalization file name> --mHHname <mHH branch name> --costhetaHHname <costhetaHH branch name> --outdir <Output directory> --extrascaling <An extra scaling to event weight>
 ```
-The `--infilename` requires as second argument the files wich contains the TTree with the input events to reweight. Instead, the `--denominatorfile` options requires as second argument the 2D (mHH, costhetaHH) histogram with the normalization. 
+The `--infilename` requires as second argument the files wich contains the TTree with the input events to reweight. Instead, the `--denominatorfile` options requires as second argument the 2D (mHH, costhetaHH) histogram with the normalization. The setting `extrascaling` allows the user to divide the value of the event reweight by a constant. It is useful to automatically take into account that merging `N` samples normalized to `x` for the reweight will result in a sample with an overall normalization of `N*x`.
 
 The (kl,kt,c2,cg,cgg) points that are targeted by the reweight are defined in a dictionary <label, couplings> [at the beginning of the script](https://github.com/fabio-mon/HHreweight/blob/master/run_reweight.py#L7). Additional points can be added following the same syntax.  
 
 The following commands will run the reweight on the HH(4b) samples which have been mentioned in the previous steps.
 ```
 mkdir data/reweightoutput/
-python run_reweight.py --infilename data/reweightinput/GluGluToHHTo4B_all_nodes.root --intreenames genEvents --denominatorfile data/reweightinput/normalization.root --mHHname mHH --costhetaHHname costhetaHH --outdir data/reweightoutput/
+python run_reweight.py --infilename data/reweightinput/GluGluToHHTo4B_all_nodes.root --intreenames genEvents --denominatorfile data/reweightinput/normalization.root --mHHname mHH --costhetaHHname costhetaHH --outdir data/reweightoutput/ --extrascaling 4.
 ```
-
+In this example the `extrascaling` is set to 4 because the input to the reweight consist in the hadd of four HH samples, each normalized to one. 
+ 
 ### Produce validation plots
 The script `drawComparisonPlots/drawComparisonPlots.py` can be used to produce validation plots. The command is:
 ```
