@@ -52,6 +52,11 @@ parser.add_option("--costhetaHHname",
 parser.add_option("--outdir",
                   default="/tmp/fmonti/",
                   help="Name of the output dir")
+parser.add_option("--extrascaling",
+                  type=float,
+                  default=1.,
+                  help="Extra scaling to the weight")
+
 (options,args)=parser.parse_args()
 
 #load reweighter
@@ -129,7 +134,7 @@ for i_tree in range(0,len(intreenames)):
             XStot = mymodel.getTotalXS(kl, kt, c2, cg, c2g)
             XS = mymodel.getDifferentialXS2D(mHH[0], costhetaHH[0], kl, kt, c2, cg, c2g)
             Noutputev = XS * mymodel.getmHHbinwidth(mHH[0]) * mymodel.getcosthetabinwidth(costhetaHH[0]) 
-            BMreweight[node_label][0] = Noutputev/Nev * Nevtot/XStot
+            BMreweight[node_label][0] = Noutputev/Nev * Nevtot/XStot / options.extrascaling
 
         #fill the output tree
         outtree.Fill()
