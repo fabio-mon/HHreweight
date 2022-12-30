@@ -22,7 +22,7 @@ vector<string> LoadFilelist(string filenameslist)
   return infilenames;
 }
 
-long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents, long double scaling=1.)
+long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents, int &N, long double scaling=1.)
 {
   int Nskippedevents=0;
   float Generator_weight;  
@@ -47,6 +47,7 @@ long double GetSampleNormalization(TChain* ch, bool RemoveBuggedEvents, long dou
   cout<<endl;
   if(RemoveBuggedEvents)
     cout<<Nskippedevents<<"/"<<Nentries<<" events removed because of large weight"<<endl;
+  N=Nentries-Nskippedevents;
   return norm;
 }
 
@@ -65,7 +66,8 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
  
   // We need to calculate the overall normalization including all the events 
   cout<<"Loop to calculate the initial normalization"<<endl;
-  long double initial_norm = GetSampleNormalization(ch, false, 1.);
+  int Nexpevents=0;
+  long double initial_norm = GetSampleNormalization(ch, false, Nexpevents, 1.);
   cout<<"Initial normalization = "<<initial_norm<<endl;
 
   // If RemoveBuggedEvents is true we need to loop again to recompute the normalization 
@@ -73,8 +75,8 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
   long double initial_fixed_norm = initial_norm;
   if(RemoveBuggedEvents) {
     cout<<"Loop to calculate the normalization after removing the bugged events"<<endl;
-    initial_fixed_norm = GetSampleNormalization(ch, true, initial_norm);
-    cout<<"Initial fixed normalization = "<<initial_norm<<endl;
+    initial_fixed_norm = GetSampleNormalization(ch, true, Nexpevents, initial_norm);
+    cout<<"Initial fixed normalization = "<<initial_fixed_norm<<endl;
   }
  
   // initialize branches of interest
@@ -151,7 +153,7 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
 
     // rescale event weight to change the overall sample normalization
     if(Normalization>0.)
-      Generator_weight = Generator_weight * Normalization / initial_norm;
+      Generator_weight = Generator_weight * Normalization / initial_fixed_norm;
 
     //find the gen Higgs
     if(DEBUG)
@@ -197,6 +199,13 @@ void nanoaodDumper(string filenameslist, string outputfilename, float Normalizat
   }
   cout<<endl;  
   cout<<"Overall sample normalization = "<<w<<endl;
+  if(outtree->GetEntries()!=Nexpevents) {
+    cout<<"WARNING: The entries in output file ("<<outtree->GetEntries()<<") differs from the expectation ("<<Nexpevents<<")"<<endl;
+    cout<<"         This could significantly change the normalization wrt the request"<<endl;
+    cout<<"         We recommend to copy the input nanoaod in a local directory and rerun"<<endl;
+    cout<<"         for i in $(cat path/to/flist.txt); do xrdcp -d 1 $i local/path/ ; done"<<endl;
+    cout<<"         for i in $(cat path/to/flist.txt); do echo local/path/$(basename \"$i\") ; done > local/path/flist.txt"<<endl;
+  }
   //save tree in the outputfile and close
   outtree->AutoSave();
   outtreefile->Close();
