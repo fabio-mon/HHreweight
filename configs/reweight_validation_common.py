@@ -1,5 +1,9 @@
 import ROOT as r
 
+
+r.gROOT.ProcessLineSync(".L drawComparisonPlots/utils.C+")
+r.gSystem.Load("drawComparisonPlots/utils_C.so")
+
 variables = {
     "mHH":{
         "formula":"mHH",
@@ -10,6 +14,37 @@ variables = {
         "ymax":1.,
         "Nbin":300
     },
+
+    "leadH_pT":{
+        "formula":"leadH.Pt()",
+        "title":"lead H p_{T} (GeV)",
+        "xmin":0,
+        "xmax":2000.,
+        "ymin":1.e-07,
+        "ymax":1.,
+        "Nbin":300
+    },
+
+    "subleadH_pT":{
+        "formula":"subleadH.Pt()",
+        "title":"sublead H p_{T} (GeV)",
+        "xmin":0,
+        "xmax":2000.,
+        "ymin":1.e-07,
+        "ymax":1.,
+        "Nbin":300
+    },
+
+    "HH_pT":{
+        "formula":"HHPt(leadH.Pt(), leadH.Eta(), leadH.Phi(), leadH.M(), subleadH.Pt(), subleadH.Eta(), subleadH.Phi(), subleadH.M())", #defined in utils.C
+        "title":"HH p_{T} (GeV)",
+        "xmin":0,
+        "xmax":1000.,
+        "ymin":1.e-07,
+        "ymax":1.,
+        "Nbin":300
+    },
+
     "costhetaHH":{
         "formula":"costhetaHH",
         "title":"cos(#theta*) (GeV)",
